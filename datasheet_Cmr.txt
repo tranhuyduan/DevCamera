@@ -1,0 +1,67 @@
+4. Các giao th?c truy?n thông máy ?nh (các l?nh k? thu?t s? h? HEX)
+4.1 	l?nh reset: 56 00 26 00 00
+Returns: 76 00 26 00 + DSP phiên b?n
+(Ch? c?n tru?c khi g?i tr? l?i 4 byte có th? s?a, b? qua thông tin phiên b?n)
+4.2 	l?nh ch?p ?nh : 56 00 36 01 00 
+Returns: 76 00 36 00 00
+4.3	L?nh yêu c?u g?i l?i d? dài ?nh:56 00 34 01 00 
+Returns: 76 00 34 00 04 00 00 XX YY
+XX YY ------- chi?u dài d? li?u hình ?nh, XX là byte cao, YY là byte th?p
+4.4	 Lênh ch?p và d?c file data và g?i d? li?u
+56 00 32 0C 00 0A 00 00 XX XX 00 00 YY YY 00 FF: 
+Returns: 76 00 32 00 00 FF D8. . . . . . FF D9 76 00 32 00 00
+00 00 XX XX --- b?t d?u t? d?a ch? (byte cao d?u tiên, sau khi các byte th?p ph?i là m?t b?i s? c?a 8)
+00 00 YY YY --- Chi?u dài d?c d? li?u (byte cao d?u tiên, sau khi các byte th?p)
+Luu ý: Các file ?nh JPEG hoàn ch?nh ph?i b?t d?u là FF D8, D9 FF cu?i.
+N?u nó là m?t m?t th?i gian d?c các d? li?u hình ?nh toàn b?, các d?a ch? b?t d?u là: 
+00 00 00 00, và d?c chi?u dài d? li?u
+l?nh ? 4.3 d?c ra thành các byte t? data hình ?nh . D? li?u du?c d?c ra b?t d?u b?ng FF D8, k?t thúc D9 FF .
+N?u b?n mu?n d?c các d? li?u hình ?nh nhi?u l?n, l?n d?u tiên d?c b?t d?u t? d?a ch? là: 00 00 00 00, sau khi d?c m?t vài lu?t  Ð?a ch? b?t d?u là s? k?t thúc c?a d? li?u d?a ch? d?c vào cu?i cùng.
+4.5 	l?nh Xóa b? nh? cache hình ?nh: 56 00 36 01 03 
+Returns: 76 00 36 00 00
+4.6 	L?nh Thi?t l?p t? l? nén hình ?nh camera: 56 00 31 05 01 01 12 04 XX
+Returns: 76 00 31 00 00
+XX cu?c t?ng tuy?n c? 36 (kho?ng: 00 ---- FF)
+4.7	 L?nh Thi?t l?p kích thu?c hình ?nh camera: (kích thu?c m?c d?nh là: 640 * 480)
+56 00 31 05 04 01 00 19 11 (320 * 240) 
+return: 76 00 31 00 00
+56 00.31 05 04 01 00 19 00 (640 * 480)
+56 00 31 05 04 01 00 19 22 (160 * 120)
+Luu ý: Sau khi b?n thi?t l?p các l?nh kích thu?c hình ?nh, b?n c?n ph?i thi?t l?p l?i th?i gian, các thi?t l?p m?i có hi?u l?c!
+4.8 	L?nh thay d?i t?c d? baud t?m th?i: 56 00 24 03 01 XX YY
+Returns: 76 00 24 00 00
+XX	YY	T?c d?
+AE	C8	9600
+56	E4	19200
+2A	F2	38400
+1C	4C	57600
+0D	A6	115200
+
+luu ý:
+1. T?c d? m?c d?nh: 115200
+2. S? d?ng d? thay d?i t?c d? truy?n, khi ho?t d?ng tr? l?i, s? tr? l?i 115200.
+
+
+
+
+4.9 	L?nh thay d?i d? truy?n ban d?u : 56 00 31 06 04 02 00 08 XX YY
+Returns: 76 00 31 00
+XX	YY	T?c d?
+AE	C8	9600
+56	E4	19200
+2A	F2	38400
+1C	4C	57600
+0D	A6	115200
+
+Chú ý: Sau khi s?a d?i n?i ti?p ban d?u baud dòi h?i m?t thi?t l?p l?i ho?c tái di?n, các thi?t l?p m?i có hi?u l?c!
+Quá trình Camera PTC06 ch?p ?nh 
+(1) Power
+(2) delay 2,5 giây
+(3) L?nh Thi?t l?p các kích thu?c hình ?nh camera (tùy ch?n, ch?ng h?n nhu thay d?i, nh?ng gì c?n ph?i du?c d?t l?i d? có hi?u l?c)
+(4) Các l?nh thi?t l?p l?i (tùy ch?n, n?u không th?c hi?n bu?c th? ba, bu?c này không b?t bu?c)
+(5) L?nh Thi?t l?p các t? l? nén hình ?nh camera (tùy ch?n)
+(6) G?i l?nh xóa cache hình ?nh
+(7) G?i L?nh ch?p ?nh
+(8) L?nh yêu c?u g?i l?i d? dài ?nh
+(9) thu du?c d? dài hình ?nh Bu?c 8, g?i m?t l?nh d?c d? li?u hình ?nh
+(10) ch?p ?nh m?t l?n n?a, quay l?i bu?c 6, d?u tiên xóa b? nh? cache, và sau dó b?t d?u ch?p  hình ?nh ti?p theo.
